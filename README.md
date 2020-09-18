@@ -25,3 +25,4 @@ cd src
 
 # Reference:
 - SML: small math library, http://www.bios.unc.edu/distrib/bios235/sml/
+- Transformer tutorial: http://jalammar.github.io/illustrated-transformer/
