@@ -1,0 +1,505 @@
+/* eg.c: demonstration of some SML facilities */
+/****************************************************************/
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include "sml.h"
+
+int main ()
+{
+  MATRIX A, B, C, D, E, H, I, J, L, Q, R, S, T, U, V, W, X, Y, Z;
+  size_t   n, i, j, k;
+  long double x0, x1, x2, x3, x4, x5, x6, x7, x8, x9;
+
+  const char* fmt = "%8" SML_PRTREAL "g ";
+
+! start echoing lines here
+
+  /* initialize */
+  A = MatDim(0, 0);
+  B = MatDim(0, 0);
+  C = MatDim(0, 0);
+  D = MatDim(0, 0);
+  E = MatDim(0, 0);
+  H = MatDim(0, 0);
+  I = MatDim(0, 0);
+  J = MatDim(0, 0);
+  L = MatDim(0, 0);
+  Q = MatDim(0, 0);
+  R = MatDim(0, 0);
+  S = MatDim(0, 0);
+  T = MatDim(0, 0);
+  U = MatDim(0, 0);
+  V = MatDim(0, 0);
+  W = MatDim(0, 0);
+  X = MatDim(0, 0);
+  Y = MatDim(0, 0);
+  Z = MatDim(0 ,0);
+
+/*******************************************************/
+
+  /* changing dimensions */
+
+  MatReDim(X, 0, 0);
+  MatReDim(X, 0, 0);
+  MatReDim(X, 5, 5);
+  MatReDim(X, 2, 3);
+  MatReDim(X, 1, 6);
+  MatReDim(X, 6, 1);
+  MatReDim(X, 4, 4);
+  MatReDim(X, 4, 4);
+
+/*******************************************************/
+
+  /* scalar functions */
+  n = 5;
+  MatJ(X, n, n, 1);
+
+  x1 = MatMin(X);
+  printf("%Lg\n", x1);
+
+  x1 = MatMax(X);
+  printf("%Lg\n", x1);
+
+  x1 = MatMinAbs(X);
+  printf("%Lg\n", x1);
+
+  x1 = MatMaxAbs(X);
+  printf("%Lg\n", x1);
+
+  x1 = MatSum(X);
+  printf("%Lg\n", x1);
+
+  x1 = MatSumAbs(X);
+  printf("%Lg\n", x1);
+
+  x1 = MatSS(X);
+  printf("%Lg\n", x1);
+
+/*******************************************************/
+
+ /* swap */
+
+  MatI(X, 2, -1);
+  MatI(Y, 4,  1);
+@X
+@Y
+  MatSwap(X, Y);
+@X
+@Y
+
+/*******************************************************/
+
+  /*  sums and means */
+
+  MatReDim(X, 5, 5);
+  MatFill(X, -1.4);
+@X
+
+  x1 = MatSum(X);
+  x2 = MatSumAbs(X);
+  x3 = MatSS(X);
+  printf("%Lg %Lg %Lg \n", x1, x2, x3);
+
+
+  x1 = MatSS(X);
+  x2 = MatSS2(R, X);
+  x3 = MatGet(R, 1, 1)*MatGet(R, 1, 1)*MatGet(R, 2, 1);
+  printf("%Lg %Lg %Lg \n", x1, x2, x3);
+
+  MatColSum(Y, X);
+@Y
+
+  MatRowSum(Y, X);
+@Y
+
+  MatJ(X, 4, 4, 1);
+@X
+
+  /* The "cumulative" functions reveal the layout (by-row or by-column)*/
+  /* If a matrix consists of 1 row or 1 column, layout makes no difference */
+  x1 = MatCSum (Y, X);  /* Y <- cumulative sum  of X */
+@Y
+
+  x2 = MatCMean(Y, Y);  /* Y <- cumulative mean of Y */
+@Y
+
+  printf("%Lg %Lg \n", x1, x2);
+
+/*******************************************************/
+
+  /* filling */
+
+  MatReDim(X, 7, 3);
+  MatFill(X, 0);
+  MatFillRow(X, 3, 1); /* Fill a row */
+@X
+  MatFillCol(X, 2,-1); /* Fill a column */
+@X
+
+  MatFill(X, 0);
+  MatFillAD(X, 1);     /* Fill Above the Diagonal */
+@X
+
+
+  MatFillBD(X, 2);     /* Fill Below the Diagonal */
+@X
+
+
+  MatFillD(X, 3);      /* Fill in the Diagonal */
+@X
+
+  MatReDim(X, 3, 7);
+  MatFill(X, 0);
+  MatFillAD(X, 1);
+@X
+
+  MatFillBD(X, 2);
+@X
+
+  MatFillD(X, 3);
+@X
+
+
+  MatBFill(X, 1, 2, 4, 6, 0);     /* Block Fill */
+@X
+
+  n = 4;
+  MatI (X, n, 3);          /* diagonal matrix */
+@X
+
+  MatJ (X, n, n+n, 3);
+@X
+
+/*******************************************************/
+
+  /* elementwise */
+
+  n = 4;
+  MatJ(A, n, n, 1);
+  MatJ(B, n, n, 2);
+  MatJ(C, n, n, 3);
+
+  MatMulE(A, A, A);
+@A
+
+  MatMulE(A, A, C);
+@A
+
+  MatMulE(A, B, A);
+@A
+
+  MatMulE(A, B, C);
+@A
+
+
+  MatDivE(A, A, A);
+@A
+
+  MatDivE(A, A, C);
+@A
+
+  MatDivE(A, B, A);
+@A
+
+  MatDivE(A, B, C);
+@A
+
+
+  MatSqrtE(A, A);
+@A
+
+  MatSqrtE(A, B);
+@A
+
+  MatI(B, n,  exp((double)1.0));
+@B
+
+  MatRecipE(A, B);
+@A
+
+  MatRecipE0(A, B);
+@A
+
+  MatLogE(A, B);
+@A
+
+  MatExpE(A, B);
+@A
+
+  MatI(B, n, 2*atan2((double)1, (double)1));
+@B
+  MatApplyE(A, sin, B);         /* A = sin(B) elementwise */
+@A
+
+/*******************************************************/
+
+  /* add, subtract */
+
+  n = 4;
+  MatJ(A, n, n, 1);
+  MatJ(B, n, n, 2);
+  MatJ(C, n, n, 3);
+
+  MatAdd(A, B, C);
+@A
+
+  MatAdd(A, A, C);
+@A
+
+  MatAdd(A, B, A);
+@A
+
+  MatAdd(A, A, A);
+@A
+
+  MatSub(A, B, C);
+@A
+
+  MatSub(A, A, C);
+@A
+
+  MatSub(A, B, A);
+@A
+
+  MatSub(A, A, A);
+@A
+
+  MatSub(A, B, B);
+@A
+
+  MatI(B, n, -1);
+  MatLogE(A, B);
+  MatSub(A, A, A);      /* A - A != 0 (there are NAN's) */
+@A
+/*******************************************************/
+
+  /* multiply */
+
+  n = 4;
+  MatJ(A, n, n, 1);
+  MatJ(B, n, n, 2);
+  MatJ(C, n, n, 3);
+
+  MatMul(A, B, C);
+@A
+
+  MatMul(A, A, C);
+@A
+
+  MatMul(A, B, A);
+@A
+
+  MatJ(A, n, n, 1);
+  MatMul(A, A, A);
+@A
+
+/*******************************************************/
+
+  n = 5;
+  MatI (I, n, 1);          /* identity matrix */
+@I
+  MatI (X, n, 1);
+  for (i = 1; i <= n; i++) MatSet(X, i, n+1-i, 1);
+@X
+  MatCopy (S, X);               /* save in S */
+
+
+/*******************************************************/
+
+  /* Householder  QR */
+
+  MatCopy (X, S);               /* restore */
+  /* The unpacked form */
+  MatQR (Q, R, X);
+@Q
+@R
+  MatMul(Y, Q, R);     /* Y <- Q * R */
+  MatSub(Y, X, Y);    /*  Y <- X - Y */
+  x1 = MatSumAbs(Y);
+
+  MatWMul ("t  ", Y, Q, NULL, Q);       /* Y <- Q' * Q  */
+@Y
+  MatSub(Y, Y, I);
+  x2 = MatSumAbs(Y);
+  printf("MatQR Error: %Lg   %Lg\n", x1, x2 );
+
+  /* The packed form and how to unpack */
+  MatQRgetQR(T, D, X);
+  MatQRgetQ (Q, T);
+  MatQRgetR (R, T, D);
+  MatQRgetH (H, T);
+@T
+@Q
+@R
+@H
+
+/*******************************************************/
+
+  /* Cholesky  */
+
+  MatWMul("  t", X, S, NULL, S);       /* X <- S * S'  */
+  MatChol(L, X);                       /* Cholesky: X = L * L' */
+@L
+  MatCopy   (A, L);
+  MatLLtIP  (A);                       /* A <- L * L' */
+@A
+  MatSub(Y, A, X);
+  x1 = MatSumAbs(Y);
+
+  MatCopy(V, X);
+  MatCholIP(V);                        /* Cholesky in-place */
+@V
+
+  MatTran(R, R);                        /* convert R to lower */
+  MatMulScalar(R, R, -1.0);             /* change signs */
+  MatSub(Y, L, R);
+  x2 = MatSumAbs(Y);
+  printf("MatChol Error: %Lg  %Lg\n", x1, x2 );
+
+
+  MatCopy(Z, X);
+  x1 = MatSInvIP(Z);                           /* g-inverse  */
+  printf("MatXInv rank(Z) = %d \n", (int) x1  );
+
+  MatMul (V, X, Z);
+  MatMul (V, V, X);
+@V
+  MatMul (V, Z, X);
+  MatMul (V, V, Z);
+@V
+
+
+/*******************************************************/
+
+  /* SVD  */
+
+  MatCopy (A, S);               /* we'll use S */
+  MatCopy (X, S);               /* restore */
+@X
+
+  x1 = MatSVD (U, S, V, X);  /*  SVD: X = U * diag(S) * V'   */
+@U
+@S
+@V
+
+  printf("Return code = %d \n", (int) x1 );
+
+  MatWMul (" wt", Y, U, S, V);   /*  Y <- U * diag(S) * V'   */
+@Y
+
+  MatSub(Y, X, Y);              /* Y <- Y - X   */
+  x1 = MatSumAbs(Y);
+
+  MatWMul ("t  ", Y, U, NULL, U);       /* Y <- U' * U  */
+  MatSub(Y, Y, I);
+  x2 = MatSumAbs(Y);
+
+  MatWMul ("t  ", Y, V, NULL, V);       /* Y <- V' * V  */
+  MatSub(Y, Y, I);
+  x3 = MatSumAbs(Y);
+  x4 = sml_fabs(MatSS(X) - MatSS(S));
+
+  printf("MatSVD Error: %Lg  %Lg  %Lg  %Lg\n", x1, x2, x3, x4 );
+
+
+
+  MatRecipE0(S, S);              /*  S <- 1/S  */
+  MatWMul (" wt", Y, V, S, U);   /*  Y <- ginv(X) = V * diag(1/S) * S' */
+@Y
+  MatMul (Z, X, Y);
+  MatMul (Z, Z, X);
+@Z
+
+  MatCopy (S, A);               /* restore S */
+/*******************************************************/
+
+  /* Eigen  */
+
+  MatCopy (X, S);               /* restore */
+
+  MatWMul ("t  ", S, X, NULL, X);       /* s <- x' * x  */
+@S
+
+  x1 = MatEigen (V, D, E, X);  /*  Eigen: X = V * diag(D,E) * V'   */
+  /* eigenvalues = (D,E), D = the real part, E = the imaginary part */
+@V
+@D
+@E
+
+  printf("Return code = %Lg \n", x1 );
+  MatWMul (" wt", Y, V, D, V);   /*  y <- v * diag(d) * v'   */
+@Y
+
+
+  MatSub(Y, X, Y);              /* y <- y - x   */
+  x1 = MatSumAbs(Y);
+  printf("MatEigen Error: %Lg \n", x1 );
+
+/*******************************************************/
+
+  /* Roots of Polynomials */
+
+  /* p(x) = -12 + 22 x - 12 x^2 + 2 x^3 */
+  /* roots: 1, 2, 3 */
+  MatReDim(B, 4, 1);
+  MatSet0(B, 0, 0,-12);
+  MatSet0(B, 1, 0, 22);
+  MatSet0(B, 2, 0,-12);
+  MatSet0(B, 3, 0,  2);
+@B
+
+  x1 = MatCompanion(C, B);
+@C
+  printf("Return code = %Lg \n", x1 );
+
+  x1 = MatEigen (V, D, E, C);  /*  Eigen: C = V * diag(D,E) * V'   */
+@D
+@E
+  printf("Return code = %Lg \n", x1 );
+/*******************************************************/
+
+/* Roots of Polynomials */
+
+  /* p(x) = -26 + 34 x - 10 x^2 + 2 x^3 */
+  /* roots: 1, 2 + 3 i, 2 - 3 i */
+  MatReDim(B, 4, 1);
+  MatSet0(B, 0, 0,-26);
+  MatSet0(B, 1, 0, 34);
+  MatSet0(B, 2, 0,-10);
+  MatSet0(B, 3, 0,  2);
+@B
+
+  x1 = MatCompanion(C, B);
+@C
+  printf("Return code = %Lg \n", x1 );
+
+  x1 = MatEigen (V, D, E, C);  /*  Eigen: C = V * diag(D,E) * V'   */
+@D
+@E
+  printf("Return code = %Lg \n", x1 );
+
+/*******************************************************/
+
+  /* free  memory */
+
+  MatUnDim(Z);
+  MatUnDim(Y);
+  MatUnDim(X);
+  MatUnDim(W);
+  MatUnDim(V);
+  MatUnDim(U);
+  MatUnDim(T);
+  MatUnDim(S);
+  MatUnDim(R);
+  MatUnDim(Q);
+  MatUnDim(L);
+  MatUnDim(J);
+  MatUnDim(I);
+  MatUnDim(H);
+  MatUnDim(E);
+  MatUnDim(D);
+  MatUnDim(C);
+  MatUnDim(B);
+  MatUnDim(A);

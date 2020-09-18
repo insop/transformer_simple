@@ -1,0 +1,1055 @@
+
+  /* initialize */
+  A = MatDim(0, 0);
+  B = MatDim(0, 0);
+  C = MatDim(0, 0);
+  D = MatDim(0, 0);
+  E = MatDim(0, 0);
+  H = MatDim(0, 0);
+  I = MatDim(0, 0);
+  J = MatDim(0, 0);
+  L = MatDim(0, 0);
+  Q = MatDim(0, 0);
+  R = MatDim(0, 0);
+  S = MatDim(0, 0);
+  T = MatDim(0, 0);
+  U = MatDim(0, 0);
+  V = MatDim(0, 0);
+  W = MatDim(0, 0);
+  X = MatDim(0, 0);
+  Y = MatDim(0, 0);
+  Z = MatDim(0 ,0);
+
+/*******************************************************/
+
+  /* changing dimensions */
+
+  MatReDim(X, 0, 0);
+  MatReDim(X, 0, 0);
+  MatReDim(X, 5, 5);
+  MatReDim(X, 2, 3);
+  MatReDim(X, 1, 6);
+  MatReDim(X, 6, 1);
+  MatReDim(X, 4, 4);
+  MatReDim(X, 4, 4);
+
+/*******************************************************/
+
+  /* scalar functions */
+  n = 5;
+  MatJ(X, n, n, 1);
+
+  x1 = MatMin(X);
+  printf("%Lg\n", x1);
+1
+
+  x1 = MatMax(X);
+  printf("%Lg\n", x1);
+1
+
+  x1 = MatMinAbs(X);
+  printf("%Lg\n", x1);
+1
+
+  x1 = MatMaxAbs(X);
+  printf("%Lg\n", x1);
+1
+
+  x1 = MatSum(X);
+  printf("%Lg\n", x1);
+25
+
+  x1 = MatSumAbs(X);
+  printf("%Lg\n", x1);
+25
+
+  x1 = MatSS(X);
+  printf("%Lg\n", x1);
+25
+
+/*******************************************************/
+
+ /* swap */
+
+  MatI(X, 2, -1);
+  MatI(Y, 4,  1);
+X:
+2 rows, 2 columns
+[   1]       -1        0 
+[   2]        0       -1 
+
+Y:
+4 rows, 4 columns
+[   1]        1        0        0        0 
+[   2]        0        1        0        0 
+[   3]        0        0        1        0 
+[   4]        0        0        0        1 
+
+  MatSwap(X, Y);
+X:
+4 rows, 4 columns
+[   1]        1        0        0        0 
+[   2]        0        1        0        0 
+[   3]        0        0        1        0 
+[   4]        0        0        0        1 
+
+Y:
+2 rows, 2 columns
+[   1]       -1        0 
+[   2]        0       -1 
+
+
+/*******************************************************/
+
+  /*  sums and means */
+
+  MatReDim(X, 5, 5);
+  MatFill(X, -1.4);
+X:
+5 rows, 5 columns
+[   1]     -1.4     -1.4     -1.4     -1.4     -1.4 
+[   2]     -1.4     -1.4     -1.4     -1.4     -1.4 
+[   3]     -1.4     -1.4     -1.4     -1.4     -1.4 
+[   4]     -1.4     -1.4     -1.4     -1.4     -1.4 
+[   5]     -1.4     -1.4     -1.4     -1.4     -1.4 
+
+
+  x1 = MatSum(X);
+  x2 = MatSumAbs(X);
+  x3 = MatSS(X);
+  printf("%Lg %Lg %Lg \n", x1, x2, x3);
+-35 35 49 
+
+
+  x1 = MatSS(X);
+  x2 = MatSS2(R, X);
+  x3 = MatGet(R, 1, 1)*MatGet(R, 1, 1)*MatGet(R, 2, 1);
+  printf("%Lg %Lg %Lg \n", x1, x2, x3);
+49 49 49 
+
+  MatColSum(Y, X);
+Enter MatColSum
+Exit MatRowSum
+Y:
+1 row, 5 columns
+[   1]       -7       -7       -7       -7       -7 
+
+
+  MatRowSum(Y, X);
+Enter MatRowSum
+Exit MatRowSum
+Y:
+5 rows, 1 column
+[   1]       -7 
+[   2]       -7 
+[   3]       -7 
+[   4]       -7 
+[   5]       -7 
+
+
+  MatJ(X, 4, 4, 1);
+X:
+4 rows, 4 columns
+[   1]        1        1        1        1 
+[   2]        1        1        1        1 
+[   3]        1        1        1        1 
+[   4]        1        1        1        1 
+
+
+  /* The "cumulative" functions reveal the layout (by-row or by-column)*/
+  /* If a matrix consists of 1 row or 1 column, layout makes no difference */
+  x1 = MatCSum (Y, X);  /* Y <- cumulative sum  of X */
+Y:
+4 rows, 4 columns
+[   1]        1        5        9       13 
+[   2]        2        6       10       14 
+[   3]        3        7       11       15 
+[   4]        4        8       12       16 
+
+
+  x2 = MatCMean(Y, Y);  /* Y <- cumulative mean of Y */
+Y:
+4 rows, 4 columns
+[   1]        1        3        5        7 
+[   2]      1.5      3.5      5.5      7.5 
+[   3]        2        4        6        8 
+[   4]      2.5      4.5      6.5      8.5 
+
+
+  printf("%Lg %Lg \n", x1, x2);
+16 8.5 
+
+/*******************************************************/
+
+  /* filling */
+
+  MatReDim(X, 7, 3);
+  MatFill(X, 0);
+  MatFillRow(X, 3, 1); /* Fill a row */
+X:
+7 rows, 3 columns
+[   1]        0        0        0 
+[   2]        0        0        0 
+[   3]        1        1        1 
+[   4]        0        0        0 
+[   5]        0        0        0 
+[   6]        0        0        0 
+[   7]        0        0        0 
+
+  MatFillCol(X, 2,-1); /* Fill a column */
+X:
+7 rows, 3 columns
+[   1]        0       -1        0 
+[   2]        0       -1        0 
+[   3]        1       -1        1 
+[   4]        0       -1        0 
+[   5]        0       -1        0 
+[   6]        0       -1        0 
+[   7]        0       -1        0 
+
+
+  MatFill(X, 0);
+  MatFillAD(X, 1);     /* Fill Above the Diagonal */
+X:
+7 rows, 3 columns
+[   1]        0        1        1 
+[   2]        0        0        1 
+[   3]        0        0        0 
+[   4]        0        0        0 
+[   5]        0        0        0 
+[   6]        0        0        0 
+[   7]        0        0        0 
+
+
+
+  MatFillBD(X, 2);     /* Fill Below the Diagonal */
+X:
+7 rows, 3 columns
+[   1]        0        1        1 
+[   2]        2        0        1 
+[   3]        2        2        0 
+[   4]        2        2        2 
+[   5]        2        2        2 
+[   6]        2        2        2 
+[   7]        2        2        2 
+
+
+
+  MatFillD(X, 3);      /* Fill in the Diagonal */
+X:
+7 rows, 3 columns
+[   1]        3        1        1 
+[   2]        2        3        1 
+[   3]        2        2        3 
+[   4]        2        2        2 
+[   5]        2        2        2 
+[   6]        2        2        2 
+[   7]        2        2        2 
+
+
+  MatReDim(X, 3, 7);
+  MatFill(X, 0);
+  MatFillAD(X, 1);
+X:
+3 rows, 7 columns
+[   1]        0        1        1        1        1        1        1 
+[   2]        0        0        1        1        1        1        1 
+[   3]        0        0        0        1        1        1        1 
+
+
+  MatFillBD(X, 2);
+X:
+3 rows, 7 columns
+[   1]        0        1        1        1        1        1        1 
+[   2]        2        0        1        1        1        1        1 
+[   3]        2        2        0        1        1        1        1 
+
+
+  MatFillD(X, 3);
+X:
+3 rows, 7 columns
+[   1]        3        1        1        1        1        1        1 
+[   2]        2        3        1        1        1        1        1 
+[   3]        2        2        3        1        1        1        1 
+
+
+
+  MatBFill(X, 1, 2, 4, 6, 0);     /* Block Fill */
+X:
+3 rows, 7 columns
+[   1]        3        1        1        0        0        0        1 
+[   2]        2        3        1        0        0        0        1 
+[   3]        2        2        3        1        1        1        1 
+
+
+  n = 4;
+  MatI (X, n, 3);          /* diagonal matrix */
+X:
+4 rows, 4 columns
+[   1]        3        0        0        0 
+[   2]        0        3        0        0 
+[   3]        0        0        3        0 
+[   4]        0        0        0        3 
+
+
+  MatJ (X, n, n+n, 3);
+X:
+4 rows, 8 columns
+[   1]        3        3        3        3        3        3        3        3 
+[   2]        3        3        3        3        3        3        3        3 
+[   3]        3        3        3        3        3        3        3        3 
+[   4]        3        3        3        3        3        3        3        3 
+
+
+/*******************************************************/
+
+  /* elementwise */
+
+  n = 4;
+  MatJ(A, n, n, 1);
+  MatJ(B, n, n, 2);
+  MatJ(C, n, n, 3);
+
+  MatMulE(A, A, A);
+A:
+4 rows, 4 columns
+[   1]        1        1        1        1 
+[   2]        1        1        1        1 
+[   3]        1        1        1        1 
+[   4]        1        1        1        1 
+
+
+  MatMulE(A, A, C);
+A:
+4 rows, 4 columns
+[   1]        3        3        3        3 
+[   2]        3        3        3        3 
+[   3]        3        3        3        3 
+[   4]        3        3        3        3 
+
+
+  MatMulE(A, B, A);
+A:
+4 rows, 4 columns
+[   1]        6        6        6        6 
+[   2]        6        6        6        6 
+[   3]        6        6        6        6 
+[   4]        6        6        6        6 
+
+
+  MatMulE(A, B, C);
+A:
+4 rows, 4 columns
+[   1]        6        6        6        6 
+[   2]        6        6        6        6 
+[   3]        6        6        6        6 
+[   4]        6        6        6        6 
+
+
+
+  MatDivE(A, A, A);
+A:
+4 rows, 4 columns
+[   1]        1        1        1        1 
+[   2]        1        1        1        1 
+[   3]        1        1        1        1 
+[   4]        1        1        1        1 
+
+
+  MatDivE(A, A, C);
+A:
+4 rows, 4 columns
+[   1] 0.333333 0.333333 0.333333 0.333333 
+[   2] 0.333333 0.333333 0.333333 0.333333 
+[   3] 0.333333 0.333333 0.333333 0.333333 
+[   4] 0.333333 0.333333 0.333333 0.333333 
+
+
+  MatDivE(A, B, A);
+A:
+4 rows, 4 columns
+[   1]        6        6        6        6 
+[   2]        6        6        6        6 
+[   3]        6        6        6        6 
+[   4]        6        6        6        6 
+
+
+  MatDivE(A, B, C);
+A:
+4 rows, 4 columns
+[   1] 0.666667 0.666667 0.666667 0.666667 
+[   2] 0.666667 0.666667 0.666667 0.666667 
+[   3] 0.666667 0.666667 0.666667 0.666667 
+[   4] 0.666667 0.666667 0.666667 0.666667 
+
+
+
+  MatSqrtE(A, A);
+A:
+4 rows, 4 columns
+[   1] 0.816497 0.816497 0.816497 0.816497 
+[   2] 0.816497 0.816497 0.816497 0.816497 
+[   3] 0.816497 0.816497 0.816497 0.816497 
+[   4] 0.816497 0.816497 0.816497 0.816497 
+
+
+  MatSqrtE(A, B);
+A:
+4 rows, 4 columns
+[   1]  1.41421  1.41421  1.41421  1.41421 
+[   2]  1.41421  1.41421  1.41421  1.41421 
+[   3]  1.41421  1.41421  1.41421  1.41421 
+[   4]  1.41421  1.41421  1.41421  1.41421 
+
+
+  MatI(B, n,  exp((double)1.0));
+B:
+4 rows, 4 columns
+[   1]  2.71828        0        0        0 
+[   2]        0  2.71828        0        0 
+[   3]        0        0  2.71828        0 
+[   4]        0        0        0  2.71828 
+
+
+  MatRecipE(A, B);
+A:
+4 rows, 4 columns
+[   1] 0.367879      inf      inf      inf 
+[   2]      inf 0.367879      inf      inf 
+[   3]      inf      inf 0.367879      inf 
+[   4]      inf      inf      inf 0.367879 
+
+
+  MatRecipE0(A, B);
+A:
+4 rows, 4 columns
+[   1] 0.367879        0        0        0 
+[   2]        0 0.367879        0        0 
+[   3]        0        0 0.367879        0 
+[   4]        0        0        0 0.367879 
+
+
+  MatLogE(A, B);
+A:
+4 rows, 4 columns
+[   1]        1     -inf     -inf     -inf 
+[   2]     -inf        1     -inf     -inf 
+[   3]     -inf     -inf        1     -inf 
+[   4]     -inf     -inf     -inf        1 
+
+
+  MatExpE(A, B);
+A:
+4 rows, 4 columns
+[   1]  15.1543        1        1        1 
+[   2]        1  15.1543        1        1 
+[   3]        1        1  15.1543        1 
+[   4]        1        1        1  15.1543 
+
+
+  MatI(B, n, 2*atan2((double)1, (double)1));
+B:
+4 rows, 4 columns
+[   1]   1.5708        0        0        0 
+[   2]        0   1.5708        0        0 
+[   3]        0        0   1.5708        0 
+[   4]        0        0        0   1.5708 
+
+  MatApplyE(A, sin, B);         /* A = sin(B) elementwise */
+A:
+4 rows, 4 columns
+[   1]        1        0        0        0 
+[   2]        0        1        0        0 
+[   3]        0        0        1        0 
+[   4]        0        0        0        1 
+
+
+/*******************************************************/
+
+  /* add, subtract */
+
+  n = 4;
+  MatJ(A, n, n, 1);
+  MatJ(B, n, n, 2);
+  MatJ(C, n, n, 3);
+
+  MatAdd(A, B, C);
+A:
+4 rows, 4 columns
+[   1]        5        5        5        5 
+[   2]        5        5        5        5 
+[   3]        5        5        5        5 
+[   4]        5        5        5        5 
+
+
+  MatAdd(A, A, C);
+A:
+4 rows, 4 columns
+[   1]        8        8        8        8 
+[   2]        8        8        8        8 
+[   3]        8        8        8        8 
+[   4]        8        8        8        8 
+
+
+  MatAdd(A, B, A);
+A:
+4 rows, 4 columns
+[   1]       10       10       10       10 
+[   2]       10       10       10       10 
+[   3]       10       10       10       10 
+[   4]       10       10       10       10 
+
+
+  MatAdd(A, A, A);
+A:
+4 rows, 4 columns
+[   1]       20       20       20       20 
+[   2]       20       20       20       20 
+[   3]       20       20       20       20 
+[   4]       20       20       20       20 
+
+
+  MatSub(A, B, C);
+A:
+4 rows, 4 columns
+[   1]       -1       -1       -1       -1 
+[   2]       -1       -1       -1       -1 
+[   3]       -1       -1       -1       -1 
+[   4]       -1       -1       -1       -1 
+
+
+  MatSub(A, A, C);
+A:
+4 rows, 4 columns
+[   1]       -4       -4       -4       -4 
+[   2]       -4       -4       -4       -4 
+[   3]       -4       -4       -4       -4 
+[   4]       -4       -4       -4       -4 
+
+
+  MatSub(A, B, A);
+A:
+4 rows, 4 columns
+[   1]        6        6        6        6 
+[   2]        6        6        6        6 
+[   3]        6        6        6        6 
+[   4]        6        6        6        6 
+
+
+  MatSub(A, A, A);
+A:
+4 rows, 4 columns
+[   1]        0        0        0        0 
+[   2]        0        0        0        0 
+[   3]        0        0        0        0 
+[   4]        0        0        0        0 
+
+
+  MatSub(A, B, B);
+A:
+4 rows, 4 columns
+[   1]        0        0        0        0 
+[   2]        0        0        0        0 
+[   3]        0        0        0        0 
+[   4]        0        0        0        0 
+
+
+  MatI(B, n, -1);
+  MatLogE(A, B);
+  MatSub(A, A, A);      /* A - A != 0 (there are NAN's) */
+A:
+4 rows, 4 columns
+[   1]     -nan     -nan     -nan     -nan 
+[   2]     -nan     -nan     -nan     -nan 
+[   3]     -nan     -nan     -nan     -nan 
+[   4]     -nan     -nan     -nan     -nan 
+
+/*******************************************************/
+
+  /* multiply */
+
+  n = 4;
+  MatJ(A, n, n, 1);
+  MatJ(B, n, n, 2);
+  MatJ(C, n, n, 3);
+
+  MatMul(A, B, C);
+A:
+4 rows, 4 columns
+[   1]       24       24       24       24 
+[   2]       24       24       24       24 
+[   3]       24       24       24       24 
+[   4]       24       24       24       24 
+
+
+  MatMul(A, A, C);
+A:
+4 rows, 4 columns
+[   1]      288      288      288      288 
+[   2]      288      288      288      288 
+[   3]      288      288      288      288 
+[   4]      288      288      288      288 
+
+
+  MatMul(A, B, A);
+A:
+4 rows, 4 columns
+[   1]     2304     2304     2304     2304 
+[   2]     2304     2304     2304     2304 
+[   3]     2304     2304     2304     2304 
+[   4]     2304     2304     2304     2304 
+
+
+  MatJ(A, n, n, 1);
+  MatMul(A, A, A);
+A:
+4 rows, 4 columns
+[   1]        4        4        4        4 
+[   2]        4        4        4        4 
+[   3]        4        4        4        4 
+[   4]        4        4        4        4 
+
+
+/*******************************************************/
+
+  n = 5;
+  MatI (I, n, 1);          /* identity matrix */
+I:
+5 rows, 5 columns
+[   1]        1        0        0        0        0 
+[   2]        0        1        0        0        0 
+[   3]        0        0        1        0        0 
+[   4]        0        0        0        1        0 
+[   5]        0        0        0        0        1 
+
+  MatI (X, n, 1);
+  for (i = 1; i <= n; i++) MatSet(X, i, n+1-i, 1);
+X:
+5 rows, 5 columns
+[   1]        1        0        0        0        1 
+[   2]        0        1        0        1        0 
+[   3]        0        0        1        0        0 
+[   4]        0        1        0        1        0 
+[   5]        1        0        0        0        1 
+
+  MatCopy (S, X);               /* save in S */
+
+
+/*******************************************************/
+
+  /* Householder  QR */
+
+  MatCopy (X, S);               /* restore */
+  /* The unpacked form */
+  MatQR (Q, R, X);
+Q:
+5 rows, 5 columns
+[   1] -0.707107        0        0        0 0.707107 
+[   2]        0 -0.707107        0 0.707107        0 
+[   3]        0        0       -1        0        0 
+[   4]        0 -0.707107        0 -0.707107        0 
+[   5] -0.707107        0        0        0 -0.707107 
+
+R:
+5 rows, 5 columns
+[   1] -1.41421        0        0        0 -1.41421 
+[   2]        0 -1.41421        0 -1.41421        0 
+[   3]        0        0       -1        0        0 
+[   4]        0        0        0 -2.22045e-016        0 
+[   5]        0        0        0        0 -2.22045e-016 
+
+  MatMul(Y, Q, R);     /* Y <- Q * R */
+  MatSub(Y, X, Y);    /*  Y <- X - Y */
+  x1 = MatSumAbs(Y);
+
+  MatWMul ("t  ", Y, Q, NULL, Q);       /* Y <- Q' * Q  */
+Y:
+5 rows, 5 columns
+[   1]        1        0        0        0 1.11022e-016 
+[   2]        0        1        0 1.11022e-016        0 
+[   3]        0        0        1        0        0 
+[   4]        0 1.11022e-016        0        1        0 
+[   5] 1.11022e-016        0        0        0        1 
+
+  MatSub(Y, Y, I);
+  x2 = MatSumAbs(Y);
+  printf("MatQR Error: %Lg   %Lg\n", x1, x2 );
+MatQR Error: 8.88178e-016   8.88178e-016
+
+  /* The packed form and how to unpack */
+  MatQRgetQR(T, D, X);
+  MatQRgetQ (Q, T);
+  MatQRgetR (R, T, D);
+  MatQRgetH (H, T);
+T:
+5 rows, 5 columns
+[   1]  1.70711        0        0        0 -1.41421 
+[   2]        0  1.70711        0 -1.41421        0 
+[   3]        0        0        2        0        0 
+[   4]        0 0.707107        0        2        0 
+[   5] 0.707107        0        0        0        2 
+
+Q:
+5 rows, 5 columns
+[   1] -0.707107        0        0        0 0.707107 
+[   2]        0 -0.707107        0 0.707107        0 
+[   3]        0        0       -1        0        0 
+[   4]        0 -0.707107        0 -0.707107        0 
+[   5] -0.707107        0        0        0 -0.707107 
+
+R:
+5 rows, 5 columns
+[   1] -1.41421        0        0        0 -1.41421 
+[   2]        0 -1.41421        0 -1.41421        0 
+[   3]        0        0       -1        0        0 
+[   4]        0        0        0 -2.22045e-016        0 
+[   5]        0        0        0        0 -2.22045e-016 
+
+H:
+5 rows, 5 columns
+[   1]  1.70711        0        0        0        0 
+[   2]        0  1.70711        0        0        0 
+[   3]        0        0        2        0        0 
+[   4]        0 0.707107        0        2        0 
+[   5] 0.707107        0        0        0        2 
+
+
+/*******************************************************/
+
+  /* Cholesky  */
+
+  MatWMul("  t", X, S, NULL, S);       /* X <- S * S'  */
+  MatChol(L, X);                       /* Cholesky: X = L * L' */
+L:
+5 rows, 5 columns
+[   1]  1.41421        0        0        0        0 
+[   2]        0  1.41421        0        0        0 
+[   3]        0        0        1        0        0 
+[   4]        0  1.41421        0        0        0 
+[   5]  1.41421        0        0        0        0 
+
+  MatCopy   (A, L);
+  MatLLtIP  (A);                       /* A <- L * L' */
+A:
+5 rows, 5 columns
+[   1]        2        0        0        0        2 
+[   2]        0        2        0        2        0 
+[   3]        0        0        1        0        0 
+[   4]        0        2        0        2        0 
+[   5]        2        0        0        0        2 
+
+  MatSub(Y, A, X);
+  x1 = MatSumAbs(Y);
+
+  MatCopy(V, X);
+  MatCholIP(V);                        /* Cholesky in-place */
+V:
+5 rows, 5 columns
+[   1]  1.41421        0        0        0        2 
+[   2]        0  1.41421        0        2        0 
+[   3]        0        0        1        0        0 
+[   4]        0  1.41421        0        0        0 
+[   5]  1.41421        0        0        0        0 
+
+
+  MatTran(R, R);                        /* convert R to lower */
+  MatMulScalar(R, R, -1.0);             /* change signs */
+  MatSub(Y, L, R);
+  x2 = MatSumAbs(Y);
+  printf("MatChol Error: %Lg  %Lg\n", x1, x2 );
+MatChol Error: 1.77636e-015  4.44089e-016
+
+
+  MatCopy(Z, X);
+  x1 = MatSInvIP(Z);                           /* g-inverse  */
+  printf("MatXInv rank(Z) = %d \n", (int) x1  );
+MatXInv rank(Z) = 3 
+
+  MatMul (V, X, Z);
+  MatMul (V, V, X);
+V:
+5 rows, 5 columns
+[   1]  2.82843        0        0        0  2.82843 
+[   2]        0  2.82843        0  2.82843        0 
+[   3]        0        0        1        0        0 
+[   4]        0  2.82843        0  2.82843        0 
+[   5]  2.82843        0        0        0  2.82843 
+
+  MatMul (V, Z, X);
+  MatMul (V, V, Z);
+V:
+5 rows, 5 columns
+[   1]        1        0        0        0        0 
+[   2]        0        1        0        0        0 
+[   3]        0        0        1        0        0 
+[   4]        0        0        0        0        0 
+[   5]        0        0        0        0        0 
+
+
+
+/*******************************************************/
+
+  /* SVD  */
+
+  MatCopy (A, S);               /* we'll use S */
+  MatCopy (X, S);               /* restore */
+X:
+5 rows, 5 columns
+[   1]        1        0        0        0        1 
+[   2]        0        1        0        1        0 
+[   3]        0        0        1        0        0 
+[   4]        0        1        0        1        0 
+[   5]        1        0        0        0        1 
+
+
+  x1 = MatSVD (U, S, V, X);  /*  SVD: X = U * diag(S) * V'   */
+U:
+5 rows, 5 columns
+[   1] -0.707107        0        0 0.707107        0 
+[   2]        0 -0.707107        0        0 -0.707107 
+[   3]        0        0       -1        0        0 
+[   4]        0 -0.707107        0        0 0.707107 
+[   5] -0.707107        0        0 -0.707107        0 
+
+S:
+5 rows, 1 column
+[   1]        2 
+[   2]        2 
+[   3]        1 
+[   4]        0 
+[   5]        0 
+
+V:
+5 rows, 5 columns
+[   1] -0.707107        0        0 -0.707107        0 
+[   2]        0 -0.707107        0        0 0.707107 
+[   3]        0        0       -1        0        0 
+[   4]        0 -0.707107        0        0 -0.707107 
+[   5] -0.707107        0        0 0.707107        0 
+
+
+  printf("Return code = %d \n", (int) x1 );
+Return code = 0 
+
+  MatWMul (" wt", Y, U, S, V);   /*  Y <- U * diag(S) * V'   */
+Y:
+5 rows, 5 columns
+[   1]        1        0        0        0        1 
+[   2]        0        1        0        1        0 
+[   3]        0        0        1        0        0 
+[   4]        0        1        0        1        0 
+[   5]        1        0        0        0        1 
+
+
+  MatSub(Y, X, Y);              /* Y <- Y - X   */
+  x1 = MatSumAbs(Y);
+
+  MatWMul ("t  ", Y, U, NULL, U);       /* Y <- U' * U  */
+  MatSub(Y, Y, I);
+  x2 = MatSumAbs(Y);
+
+  MatWMul ("t  ", Y, V, NULL, V);       /* Y <- V' * V  */
+  MatSub(Y, Y, I);
+  x3 = MatSumAbs(Y);
+  x4 = sml_fabs(MatSS(X) - MatSS(S));
+
+  printf("MatSVD Error: %Lg  %Lg  %Lg  %Lg\n", x1, x2, x3, x4 );
+MatSVD Error: 8.88178e-016  8.88178e-016  0  0
+
+
+
+  MatRecipE0(S, S);              /*  S <- 1/S  */
+  MatWMul (" wt", Y, V, S, U);   /*  Y <- ginv(X) = V * diag(1/S) * S' */
+Y:
+5 rows, 5 columns
+[   1]     0.25        0        0        0     0.25 
+[   2]        0     0.25        0     0.25        0 
+[   3]        0        0        1        0        0 
+[   4]        0     0.25        0     0.25        0 
+[   5]     0.25        0        0        0     0.25 
+
+  MatMul (Z, X, Y);
+  MatMul (Z, Z, X);
+Z:
+5 rows, 5 columns
+[   1]        1        0        0        0        1 
+[   2]        0        1        0        1        0 
+[   3]        0        0        1        0        0 
+[   4]        0        1        0        1        0 
+[   5]        1        0        0        0        1 
+
+
+  MatCopy (S, A);               /* restore S */
+/*******************************************************/
+
+  /* Eigen  */
+
+  MatCopy (X, S);               /* restore */
+
+  MatWMul ("t  ", S, X, NULL, X);       /* s <- x' * x  */
+S:
+5 rows, 5 columns
+[   1]        2        0        0        0        2 
+[   2]        0        2        0        2        0 
+[   3]        0        0        1        0        0 
+[   4]        0        2        0        2        0 
+[   5]        2        0        0        0        2 
+
+
+  x1 = MatEigen (V, D, E, X);  /*  Eigen: X = V * diag(D,E) * V'   */
+  /* eigenvalues = (D,E), D = the real part, E = the imaginary part */
+V:
+5 rows, 5 columns
+[   1] 0.707107        0        0 0.707107        0 
+[   2]        0 -0.707107        0        0 0.707107 
+[   3]        0        0        1        0        0 
+[   4]        0 0.707107        0        0 0.707107 
+[   5] -0.707107        0        0 0.707107        0 
+
+D:
+5 rows, 1 column
+[   1]        0 
+[   2] 2.22045e-016 
+[   3]        1 
+[   4]        2 
+[   5]        2 
+
+E:
+5 rows, 1 column
+[   1]        0 
+[   2]        0 
+[   3]        0 
+[   4]        0 
+[   5]        0 
+
+
+  printf("Return code = %Lg \n", x1 );
+Return code = 0 
+  MatWMul (" wt", Y, V, D, V);   /*  y <- v * diag(d) * v'   */
+Y:
+5 rows, 5 columns
+[   1]        1        0        0        0        1 
+[   2]        0        1        0        1        0 
+[   3]        0        0        1        0        0 
+[   4]        0        1        0        1        0 
+[   5]        1        0        0        0        1 
+
+
+
+  MatSub(Y, X, Y);              /* y <- y - x   */
+  x1 = MatSumAbs(Y);
+  printf("MatEigen Error: %Lg \n", x1 );
+MatEigen Error: 2.22045e-015 
+
+/*******************************************************/
+
+  /* Roots of Polynomials */
+
+  /* p(x) = -12 + 22 x - 12 x^2 + 2 x^3 */
+  /* roots: 1, 2, 3 */
+  MatReDim(B, 4, 1);
+  MatSet0(B, 0, 0,-12);
+  MatSet0(B, 1, 0, 22);
+  MatSet0(B, 2, 0,-12);
+  MatSet0(B, 3, 0,  2);
+B:
+4 rows, 1 column
+[   1]      -12 
+[   2]       22 
+[   3]      -12 
+[   4]        2 
+
+
+  x1 = MatCompanion(C, B);
+C:
+3 rows, 3 columns
+[   1]        0        0        6 
+[   2]        1        0      -11 
+[   3]        0        1        6 
+
+  printf("Return code = %Lg \n", x1 );
+Return code = 0 
+
+  x1 = MatEigen (V, D, E, C);  /*  Eigen: C = V * diag(D,E) * V'   */
+D:
+3 rows, 1 column
+[   1]        1 
+[   2]        2 
+[   3]        3 
+
+E:
+3 rows, 1 column
+[   1]        0 
+[   2]        0 
+[   3]        0 
+
+  printf("Return code = %Lg \n", x1 );
+Return code = 0 
+/*******************************************************/
+
+/* Roots of Polynomials */
+
+  /* p(x) = -26 + 34 x - 10 x^2 + 2 x^3 */
+  /* roots: 1, 2 + 3 i, 2 - 3 i */
+  MatReDim(B, 4, 1);
+  MatSet0(B, 0, 0,-26);
+  MatSet0(B, 1, 0, 34);
+  MatSet0(B, 2, 0,-10);
+  MatSet0(B, 3, 0,  2);
+B:
+4 rows, 1 column
+[   1]      -26 
+[   2]       34 
+[   3]      -10 
+[   4]        2 
+
+
+  x1 = MatCompanion(C, B);
+C:
+3 rows, 3 columns
+[   1]        0        0       13 
+[   2]        1        0      -17 
+[   3]        0        1        5 
+
+  printf("Return code = %Lg \n", x1 );
+Return code = 0 
+
+  x1 = MatEigen (V, D, E, C);  /*  Eigen: C = V * diag(D,E) * V'   */
+D:
+3 rows, 1 column
+[   1]        1 
+[   2]        2 
+[   3]        2 
+
+E:
+3 rows, 1 column
+[   1]        0 
+[   2]        3 
+[   3]       -3 
+
+  printf("Return code = %Lg \n", x1 );
+Return code = 0 
+
+/*******************************************************/
+
+  /* free  memory */
+
+  MatUnDim(Z);
+  MatUnDim(Y);
+  MatUnDim(X);
+  MatUnDim(W);
+  MatUnDim(V);
+  MatUnDim(U);
+  MatUnDim(T);
+  MatUnDim(S);
+  MatUnDim(R);
+  MatUnDim(Q);
+  MatUnDim(L);
+  MatUnDim(J);
+  MatUnDim(I);
+  MatUnDim(H);
+  MatUnDim(E);
+  MatUnDim(D);
+  MatUnDim(C);
+  MatUnDim(B);
+  MatUnDim(A);
