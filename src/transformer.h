@@ -31,4 +31,5 @@ struct Transformer {
   int dim_internal; // internal dimension of the token
   int n_seq; // number token, i.e. sequence length
   int n_mha; // number of multi-head attention
+  int dim_hidden; // dim of hidden layer of ffn
 };

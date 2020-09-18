@@ -13,6 +13,8 @@
 #define DIM_EMBEDDING 4 // embedding dimension
 #define DIM_INTERNAL 3  // internal dimension
 
+#define DIM_FFN 8  // hidden layer size for ffn
+
 #define DEBUG 1
 
 const char* fmt = "%8" SML_PRTREAL "g ";
@@ -199,34 +201,40 @@ Tensor transformer_block(struct Transformer *trfm, Tensor x) {
   MatWrite(stdout , x, fmt,"x:");
   MatWrite(stdout , z, fmt,"z:");
 #endif
-  MatAdd(z, z, x);
 
   // TODO: add layer norm
-  // TODO: add FFN (feed forward neural network)
+  MatAdd(z, z, x);
 
-#if 0
-  Tensor x_atten, x_ff1, x_ff2;
+  Tensor x_ff, x_out;
 
-  // XXX
-//  x_atten = layer_norm(residual);
+  x_ff = MatDim(trfm->dim_hidden, trfm->dim_embedding);
+  x_out = MatDim(MatRows(z), MatCols(z));
 
-  // XXX
-//  x_ff1 = layer_ff(trfm->ff1, x_atten);
+  MatMul(x_ff, z, trfm->w_ff1);
 
-//  x_ff2 = layer_ff(trfm->ff2, x_ff1);
+#if DEBUG
+  MatWrite(stdout , x_ff, fmt,"x_ff:");
+  MatWrite(stdout , trfm->w_ff2, fmt,"w_ff2:");
+#endif
+  MatMul(x_out, x_ff, trfm->w_ff2);
 
+#if DEBUG
+  MatWrite(stdout , x_out, fmt,"x_out:");
+#endif
 
-  Tensor residual2, x_out;
-  MatAdd(x_atten, x_ff2, residual2);
-
-//  x_out = layer_norm(residual2);
+  // TODO: add layer norm
+  MatAdd(x_out, x_out, z);
 
   // skip dropout
 
-  return x_out;
-#endif
+  MatUnDim(x_ff);
 
-  return z;
+  // TODO free finished mat
+
+#if DEBUG
+  MatWrite(stdout , x_out, fmt,"x_out:");
+#endif
+  return x_out;
 }
 
 // instantiate transformer block pass the config struct
@@ -234,14 +242,25 @@ struct Transformer *init_transformer(void) {
 
   struct Transformer *trfm = malloc(sizeof(struct Transformer));
   memset(trfm, 0, sizeof(struct Transformer));
+
+  // TODO: add config loading
+  // TODO: add trained weight loading
+
   trfm->dim_embedding = DIM_EMBEDDING;
   trfm->dim_internal = DIM_INTERNAL;
   trfm->n_seq = N_SEQ;
   trfm->n_mha = N_MHA;
+  trfm->dim_hidden = DIM_FFN;
 
   trfm->w_o = MatDim(trfm->dim_internal * trfm->n_mha, trfm->dim_embedding);
+
+  trfm->w_ff1 = MatDim(trfm->dim_embedding, trfm->dim_hidden);
+  trfm->w_ff2 = MatDim(trfm->dim_hidden, trfm->dim_embedding);
+
   // DEBUG FILL
   MatFill(trfm->w_o, 10.);
+  MatFill(trfm->w_ff1, 3.);
+  MatFill(trfm->w_ff1, 4.);
 
   struct SelfAtten *sa;
   for (int i = 0; i < N_MHA; i++) {
