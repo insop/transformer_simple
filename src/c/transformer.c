@@ -192,6 +192,16 @@ Tensor multi_head_attention(struct Transformer *trfm, Tensor x) {
   return z;
 }
 
+void ReLU(Tensor x) {
+
+  for (int r = 0; r < MatRows(x); r++) {
+    for (int c = 0; c < MatCols(x); c++) {
+      if (MatGet0(x, r, c) < 0.)
+        MatSet0(x, r, c, 0.);
+    }
+  }
+}
+
 Tensor transformer_block(struct Transformer *trfm, Tensor x) {
 
   Tensor z;
@@ -212,6 +222,8 @@ Tensor transformer_block(struct Transformer *trfm, Tensor x) {
   x_out = MatDim(MatRows(z), MatCols(z));
 
   MatMul(x_ff, z, trfm->w_ff1);
+
+  ReLU(x);
 
 #if DEBUG
   MatWrite(stdout , x_ff, fmt,"x_ff:");
