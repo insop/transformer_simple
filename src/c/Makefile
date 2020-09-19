@@ -3,8 +3,10 @@
 CC = gcc
 RM = rm
 
-CFLAGS=-I../sml -g
-LFLAGS=-L../sml
+ROOT=../../
+CFLAGS=-I${ROOT}/sml -g
+LFLAGS=-L${ROOT}/sml ${ROOT}sml/sml.lib
+
 
 #*****************************************************************
 
@@ -12,7 +14,7 @@ all: transformer
 .PHONY: all
 
 transformer    : transformer.c
-	$(CC) $(CFLAGS) -o $@  transformer.c  $(LFLAGS) ../sml/sml.lib  -lm
+	$(CC) $(CFLAGS) -o $@  transformer.c  $(LFLAGS) -lm
 
 .PHONY: clean
 clean:

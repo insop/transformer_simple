@@ -20,7 +20,7 @@
 const char* fmt = "%8" SML_PRTREAL "g ";
 
 // simple soft max in axis=1
-void soft_max(Tensor a) {
+void softmax(Tensor a) {
   size_t i, j, rows=MatRows(a), cols=MatCols(a);
 
   // for numerical stability, max of row can be used per row instead
@@ -37,6 +37,7 @@ void soft_max(Tensor a) {
       float e = MatGet0(a, i, j)/sum_exp;
       MatSet0(a, i, j, e);
     }
+
 #if DEBUG
     float sum = 0.;
     for (j = 0; j != cols; ++j) {
@@ -114,7 +115,7 @@ Tensor self_attention(struct SelfAtten *sa, Tensor x) {
 #endif
 
   // softmax probability
-  soft_max(qk_t_out);
+  softmax(qk_t_out);
 
 #if DEBUG
   MatWrite(stdout , qk_t_out, fmt,"qk_t_out softmax:");
