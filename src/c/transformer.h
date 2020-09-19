@@ -8,9 +8,9 @@ struct Transformer;
  * self attention block
  */
 struct SelfAtten {
-  Tensor w_q;
-  Tensor w_k;
-  Tensor w_v;
+  Tensor w_q; // dim_embedding x dim_internal
+  Tensor w_k; // ..
+  Tensor w_v; // ..
 
   struct Transformer *trfm; // back pointer
 };
