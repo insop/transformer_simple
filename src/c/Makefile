@@ -4,9 +4,10 @@ CC = gcc
 RM = rm
 
 ROOT=../../
-CFLAGS=-I${ROOT}/sml -g
-LFLAGS=-L${ROOT}/sml ${ROOT}sml/sml.lib
+LIB=${ROOT}/lib
 
+CFLAGS=-I${LIB}/sml -g
+LFLAGS=-L${LIB}/sml ${LIB}/sml/sml.lib
 
 #*****************************************************************
 
