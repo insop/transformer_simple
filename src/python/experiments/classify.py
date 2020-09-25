@@ -1,3 +1,7 @@
+#
+# code from https://github.com/pbloem/former
+#
+
 from _context import transformer_simple
 from _context import util
 

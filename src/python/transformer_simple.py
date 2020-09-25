@@ -9,8 +9,10 @@ from util import d, here
 class SelfAttention(nn.Module):
     def __init__(self, dim_emb, dim_internal, heads=8, mask=False, dropout=0.0):
         """
+        A single self attention block
+
         :param dim_emb: embedding dimension
-        :param dim_internal: dimension of internal representation
+        :param dim_internal: dimension of internal representation, usually the same as dim_emb
         :param head: number of multi head
         :param mask
 
@@ -39,7 +41,8 @@ class SelfAttention(nn.Module):
         keys = self.tokeys(x)
         values = self.tovalues(x)
 
-        dot = torch.matmul(queries, keys.transpose(-2, -1)) / self.kSqrt_dim_emb
+        keys_transposed =  keys.transpose(-2, -1)
+        dot = torch.matmul(queries, keys_transposed)  / self.kSqrt_dim_emb
 
         # softmax on row-wise element
         p_attn = F.softmax(dot, dim=2)
@@ -49,12 +52,14 @@ class SelfAttention(nn.Module):
         return z
 
 
-
 class MultiHeadAttention(nn.Module):
     def __init__(self, n_seq, dim_emb, dim_internal, heads=8, mask=False, dropout=0.0):
         """
+        multi head attention block
+
+        :param n_seq: number of token sequence
         :param dim_emb: embedding dimension
-        :param dim_internal: dimension of internal representation
+        :param dim_internal: dimension of internal representation, usually the same as dim_emb
         :param head: number of multi head
         :param mask
 
@@ -70,8 +75,6 @@ class MultiHeadAttention(nn.Module):
                                          for _ in range(heads)])
         self.w_o = nn.ModuleList([nn.Linear(dim_internal, dim_emb) \
                                          for _ in range(heads)])
-
-        self.layer_norm = nn.LayerNorm(self.n_seq, eps=1e-6)
 
     def forward(self, x):
 
@@ -131,6 +134,8 @@ class TransformerSimpleClassify(nn.Module):
         self.num_tokens = num_tokens
         self.max_pool = max_pool
         self.depth = depth
+        self.dim_emb = dim_emb
+        self.dim_internal = dim_internal
 
         self.token_embedding = nn.Embedding(embedding_dim=dim_emb, num_embeddings=num_tokens)
         self.pos_embedding = nn.Embedding(embedding_dim=dim_emb, num_embeddings=n_seq)
@@ -145,6 +150,8 @@ class TransformerSimpleClassify(nn.Module):
         self.do = nn.Dropout(dropout)
 
     def forward(self, x):
+
+        # x = [batch, n_seq]
         tokens = self.token_embedding(x)
 
         b, t, e = tokens.size()
