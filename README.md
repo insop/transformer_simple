@@ -41,3 +41,4 @@ python ./experiments/classify.py  --random-seed=1234 --num-epochs=1 --tiny
 - SML: small math library, http://www.bios.unc.edu/distrib/bios235/sml/
 - Transformer tutorial: http://jalammar.github.io/illustrated-transformer/
 - Python Transformer implementation: http://peterbloem.nl/blog/transformers
+- tranformer implementation: https://github.com/tunz/transformer-pytorch

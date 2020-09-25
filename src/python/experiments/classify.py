@@ -2,7 +2,7 @@
 # code from https://github.com/pbloem/former
 #
 
-from _context import transformer_simple
+from _context import classifier
 from _context import util
 
 from util import d, here
@@ -69,7 +69,7 @@ def go(arg):
         mx = arg.max_length
 
     # create the model
-    model = transformer_simple.TransformerSimpleClassify(n_seq=mx, dim_emb=arg.embedding_size, dim_internal=arg.embedding_size, \
+    model = classifier.TransformerSimpleClassify(n_seq=mx, dim_emb=arg.embedding_size, dim_internal=arg.embedding_size, \
                                                          num_tokens=arg.vocab_size, num_classes=NUM_CLS, max_pool=arg.max_pool, \
                                                          heads=arg.num_heads)
     if torch.cuda.is_available():

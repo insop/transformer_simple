@@ -1,3 +1,13 @@
+"""
+
+modules for implementing basic transformer block
+
+functions with `_naive` prefix means that it is a naive implementation
+
+
+"""
+
+
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -6,7 +16,12 @@ import random, math
 
 from util import d, here
 
-class SelfAttention(nn.Module):
+def init_weight_zavier(x):
+    nn.init.xavier_uniform_(x.weight)
+    if x.bias is not None:
+        nn.init.constant_(x.bias, 0)
+
+class SelfAttention_naive(nn.Module):
     def __init__(self, dim_emb, dim_internal, heads=8, mask=False, dropout=0.0):
         """
         A single self attention block
@@ -52,7 +67,7 @@ class SelfAttention(nn.Module):
         return z
 
 
-class MultiHeadAttention(nn.Module):
+class MultiHeadAttention_naive(nn.Module):
     def __init__(self, n_seq, dim_emb, dim_internal, heads=8, mask=False, dropout=0.0):
         """
         multi head attention block
@@ -71,7 +86,7 @@ class MultiHeadAttention(nn.Module):
         self.heads = heads
         self.mask = mask
 
-        self.attentions = nn.ModuleList([SelfAttention(dim_emb, dim_internal, heads, mask, dropout) \
+        self.attentions = nn.ModuleList([SelfAttention_naive(dim_emb, dim_internal, heads, mask, dropout) \
                                          for _ in range(heads)])
         self.w_o = nn.ModuleList([nn.Linear(dim_internal, dim_emb) \
                                          for _ in range(heads)])
@@ -87,14 +102,14 @@ class MultiHeadAttention(nn.Module):
         return output
 
 
-class TransformerBlock(nn.Module):
+class TransformerBlock_naive(nn.Module):
     def __init__(self, n_seq, dim_emb, dim_internal, heads=8, mask=False, ff_hidden_mult=4, dropout=0.0):
         """
         :ff_hidden_mult: number of multiples of embedding for total hidden size
         """
         super().__init__()
 
-        self.mha = MultiHeadAttention(n_seq=n_seq, dim_emb=dim_emb, dim_internal=dim_internal, heads=heads, mask=mask, dropout=dropout)
+        self.mha = MultiHeadAttention_naive(n_seq=n_seq, dim_emb=dim_emb, dim_internal=dim_internal, heads=heads, mask=mask, dropout=dropout)
         self.mask = mask
 
         self.norm1 = nn.LayerNorm(dim_emb)
@@ -106,6 +121,9 @@ class TransformerBlock(nn.Module):
             nn.Linear(ff_hidden_mult * dim_emb, dim_emb)
         )
         self.do = nn.Dropout(dropout)
+
+        init_weight_zavier(self.ff[0])  # 1st linear
+        init_weight_zavier(self.ff[2])  # 2nd linear
 
 
     def forward(self, x):
@@ -126,50 +144,6 @@ class TransformerBlock(nn.Module):
 
         return out
 
-## for classify
-class TransformerSimpleClassify(nn.Module):
-    def __init__(self, n_seq, dim_emb, dim_internal, num_tokens, num_classes, max_pool=True, heads=8, depth=6, mask=False, ff_hidden_mult=4, dropout=0.0):
-        super().__init__()
-
-        self.num_tokens = num_tokens
-        self.max_pool = max_pool
-        self.depth = depth
-        self.dim_emb = dim_emb
-        self.dim_internal = dim_internal
-
-        self.token_embedding = nn.Embedding(embedding_dim=dim_emb, num_embeddings=num_tokens)
-        self.pos_embedding = nn.Embedding(embedding_dim=dim_emb, num_embeddings=n_seq)
-
-        trfm_blocks = [TransformerBlock(n_seq=n_seq, dim_emb=dim_emb, dim_internal=dim_emb, heads=heads) \
-                       for _ in range(depth)]
-
-        self.trfm_blocks = nn.Sequential(*trfm_blocks)
-
-        self.toprobs = nn.Linear(dim_emb, num_classes)
-
-        self.do = nn.Dropout(dropout)
-
-    def forward(self, x):
-
-        # x = [batch, n_seq]
-        tokens = self.token_embedding(x)
-
-        b, t, e = tokens.size()
-
-        positions = self.pos_embedding(torch.arange(t, device=d()))[None, :, :].expand(b, t, e)
-        x = tokens + positions
-
-        x = self.do(x)
-
-        x = self.trfm_blocks(x)
-
-        x = x.max(dim=1)[0] if self.max_pool else x.mean(dim=1) # pool in sequence direction
-
-        x = self.toprobs(x)
-
-        return F.log_softmax(x, dim=1)
-
-
 if __name__ == "__main__":
 
     """
@@ -180,11 +154,11 @@ if __name__ == "__main__":
     # create model
     #model = transformer()
 
-    sa = SelfAttention(4, 3)
+    sa = SelfAttention_naive(4, 3)
     print(sa)
-    mha = MultiHeadAttention(2, 4, 3)
+    mha = MultiHeadAttention_naive(2, 4, 3)
     print(mha)
-    model = TransformerBlock(2, 4, 3)
+    model = TransformerBlock_naive(2, 4, 3)
     print(model)
 
     model_tb = TransformerSimpleClassify(2, 4, 4, 10, 2)
