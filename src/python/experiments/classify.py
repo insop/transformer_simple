@@ -2,6 +2,8 @@
 # code from https://github.com/pbloem/former
 #
 
+import os
+
 from _context import classifier
 from _context import util
 
@@ -26,6 +28,20 @@ LOG2E = math.log2(math.e)
 TEXT = data.Field(lower=True, include_lengths=True, batch_first=True)
 LABEL = data.Field(sequential=False)
 NUM_CLS = 2
+
+def print_model(model, opt):
+    # Print model's state_dict
+    print("Model's state_dict:")
+    for param_tensor in model.state_dict():
+        print(param_tensor, "\t", model.state_dict()[param_tensor].size())
+    for param_tensor in model.state_dict():
+        print(param_tensor, "\t", model.state_dict()[param_tensor])
+
+    # Print optimizer's state_dict
+    print("Optimizer's state_dict:")
+    for var_name in opt.state_dict():
+        print(var_name, "\t", opt.state_dict()[var_name])
+
 
 def go(arg):
     """
@@ -69,14 +85,18 @@ def go(arg):
         mx = arg.max_length
 
     # create the model
+
     model = classifier.TransformerSimpleClassify(n_seq=mx, dim_emb=arg.embedding_size, dim_internal=arg.embedding_size, \
                                                          num_tokens=arg.vocab_size, num_classes=NUM_CLS, max_pool=arg.max_pool, \
-                                                         heads=arg.num_heads)
+                                                         heads=arg.num_heads, depth=arg.depth)
     if torch.cuda.is_available():
         model.cuda()
 
     opt = torch.optim.Adam(lr=arg.lr, params=model.parameters())
     sch = torch.optim.lr_scheduler.LambdaLR(opt, lambda i: min(i / (arg.lr_warmup / arg.batch_size), 1.0))
+
+    if arg.debug == True:
+        print_model(model, opt)
 
     # training loop
     seen = 0
@@ -131,6 +151,32 @@ def go(arg):
             print(f'-- {"test" if arg.final else "validation"} accuracy {acc:.3}')
             tbw.add_scalar('classification/test-loss', float(loss.item()), e)
 
+    MODEL_DIR = "saved_model/"
+    PATH=os.path.join(MODEL_DIR, arg.model_name)
+    print(f'Save model to {PATH}')
+    torch.save(model.state_dict(), PATH)
+
+
+    print('==============')
+    file_name = 'single_transformer1.pt'
+    PATH=os.path.join(MODEL_DIR, file_name)
+
+    print(f'Load model to {PATH}')
+
+    model.load_state_dict(torch.load(PATH))
+    model.eval()
+    INPUT_DATA_PATH='saved_model/input_data.pt'
+    OUTPUT_DATA_PATH='saved_model/output_data.pt'
+    input_load = torch.load(INPUT_DATA_PATH)
+    output_load = torch.load(OUTPUT_DATA_PATH)
+
+    output_test = model(input_load)
+    torch.allclose(output_load, output_test)
+    print("output_test")
+    print(output_test)
+    print("output_load")
+    print(output_load)
+
 
 if __name__ == "__main__":
 
@@ -154,6 +200,10 @@ if __name__ == "__main__":
     parser.add_argument("-T", "--tb_dir", dest="tb_dir",
                         help="Tensorboard logging directory",
                         default='./runs')
+
+    parser.add_argument("-m", "--model_name", dest="model_name",
+                        help="Saved model name",
+                        default='./simple_transformer.pt')
 
     parser.add_argument("-f", "--final", dest="final",
                         help="Whether to run on the real test set (if not included, the validation set is used).",
@@ -201,6 +251,10 @@ if __name__ == "__main__":
                         dest="gradient_clipping",
                         help="Gradient clipping.",
                         default=1.0, type=float)
+
+    parser.add_argument("-D", "--debug", dest="debug",
+                        help="enable debugging",
+                        action="store_true")
 
     options = parser.parse_args()
 
