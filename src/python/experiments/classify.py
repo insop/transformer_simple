@@ -47,6 +47,19 @@ def go(arg):
     """
     Creates and trains a basic transformer for the IMDB sentiment classification task.
     """
+
+    # torch.set_default_dtype(torch.int8)
+
+    if arg.precision == 'float32':
+        dtype = torch.float32
+    elif arg.precision == 'float63':
+        dtype = torch.float64
+    elif arg.precision == 'int8':
+        dtype = torch.int8
+    else:
+        # default
+        dtype = torch.float32
+
     tbw = SummaryWriter(log_dir=arg.tb_dir) # Tensorboard logging
 
     # load the IMDB data
@@ -88,7 +101,8 @@ def go(arg):
 
     model = classifier.TransformerSimpleClassify(n_seq=mx, dim_emb=arg.embedding_size, dim_internal=arg.embedding_size, \
                                                          num_tokens=arg.vocab_size, num_classes=NUM_CLS, max_pool=arg.max_pool, \
-                                                         heads=arg.num_heads, depth=arg.depth)
+                                                         heads=arg.num_heads, depth=arg.depth, dtype=dtype
+                                                 )
     if torch.cuda.is_available():
         model.cuda()
 
@@ -97,6 +111,11 @@ def go(arg):
 
     if arg.debug == True:
         print_model(model, opt)
+
+        # MODEL_DIR = "saved_model/"
+        # PATH = os.path.join(MODEL_DIR, arg.model_name)
+        # print(f'Save model to {PATH}')
+        # torch.save(model.state_dict(), PATH)
 
     # training loop
     seen = 0
@@ -111,6 +130,8 @@ def go(arg):
 
             input = batch.text[0]
             label = batch.label - 1
+
+            import pdb;pdb.set_trace()
 
             if input.size(1) > mx:
                 input = input[:, :mx]
@@ -255,6 +276,11 @@ if __name__ == "__main__":
     parser.add_argument("-D", "--debug", dest="debug",
                         help="enable debugging",
                         action="store_true")
+
+    parser.add_argument("-p", "--precision", dest="precision",
+                        help="precision",
+                        default="float32")
+
 
     options = parser.parse_args()
 

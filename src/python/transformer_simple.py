@@ -22,7 +22,7 @@ def init_weight_zavier(x):
         nn.init.constant_(x.bias, 0)
 
 class SelfAttention_naive(nn.Module):
-    def __init__(self, dim_emb, dim_internal, heads=8, mask=False, dropout=0.0):
+    def __init__(self, dim_emb, dim_internal, heads=8, mask=False, dropout=0.0, dtype=torch.float32):
         """
         A single self attention block
 
@@ -39,9 +39,10 @@ class SelfAttention_naive(nn.Module):
         self.heads = heads
         self.mask = mask
 
-        self.toqueries = nn.Linear(dim_emb, dim_internal)
-        self.tokeys = nn.Linear(dim_emb, dim_internal)
-        self.tovalues = nn.Linear(dim_emb, dim_internal)
+
+        self.toqueries = nn.Linear(dim_emb, dim_internal).type(dtype)
+        self.tokeys = nn.Linear(dim_emb, dim_internal).type(dtype)
+        self.tovalues = nn.Linear(dim_emb, dim_internal).type(dtype)
 
         self.kSqrt_dim_emb = math.sqrt(self.dim_emb)
 
@@ -68,7 +69,7 @@ class SelfAttention_naive(nn.Module):
 
 
 class MultiHeadAttention_naive(nn.Module):
-    def __init__(self, n_seq, dim_emb, dim_internal, heads=8, mask=False, dropout=0.0):
+    def __init__(self, n_seq, dim_emb, dim_internal, heads=8, mask=False, dropout=0.0, dtype=torch.float32):
         """
         multi head attention block
 
@@ -86,9 +87,9 @@ class MultiHeadAttention_naive(nn.Module):
         self.heads = heads
         self.mask = mask
 
-        self.attentions = nn.ModuleList([SelfAttention_naive(dim_emb, dim_internal, heads, mask, dropout) \
+        self.attentions = nn.ModuleList([SelfAttention_naive(dim_emb, dim_internal, heads, mask, dropout, dtype=dtype) \
                                          for _ in range(heads)])
-        self.w_o = nn.ModuleList([nn.Linear(dim_internal, dim_emb) \
+        self.w_o = nn.ModuleList([nn.Linear(dim_internal, dim_emb).type(dtype) \
                                          for _ in range(heads)])
 
     def forward(self, x):
@@ -103,27 +104,27 @@ class MultiHeadAttention_naive(nn.Module):
 
 
 class TransformerBlock_naive(nn.Module):
-    def __init__(self, n_seq, dim_emb, dim_internal, heads=8, mask=False, ff_hidden_mult=4, dropout=0.0):
+    def __init__(self, n_seq, dim_emb, dim_internal, heads=8, mask=False, ff_hidden_mult=4, dropout=0.0, dtype=torch.float32):
         """
         :ff_hidden_mult: number of multiples of embedding for total hidden size
         """
         super().__init__()
 
-        self.mha = MultiHeadAttention_naive(n_seq=n_seq, dim_emb=dim_emb, dim_internal=dim_internal, heads=heads, mask=mask, dropout=dropout)
+        self.mha = MultiHeadAttention_naive(n_seq=n_seq, dim_emb=dim_emb, dim_internal=dim_internal, heads=heads, mask=mask, dropout=dropout, dtype=dtype)
         self.mask = mask
 
-        self.norm1 = nn.LayerNorm(dim_emb)
-        self.norm2 = nn.LayerNorm(dim_emb)
+        self.norm1 = nn.LayerNorm(dim_emb).type(dtype)
+        self.norm2 = nn.LayerNorm(dim_emb).type(dtype)
 
         self.ff = nn.Sequential(
-            nn.Linear(dim_emb, ff_hidden_mult * dim_emb),
-            nn.ReLU(),
-            nn.Linear(ff_hidden_mult * dim_emb, dim_emb)
-        )
-        self.do = nn.Dropout(dropout)
+            nn.Linear(dim_emb, ff_hidden_mult * dim_emb).type(dtype),
+            nn.ReLU().type(dtype),
+            nn.Linear(ff_hidden_mult * dim_emb, dim_emb).type(dtype)).type(dtype)
+        self.do = nn.Dropout(dropout).type(dtype)
 
-        init_weight_zavier(self.ff[0])  # 1st linear
-        init_weight_zavier(self.ff[2])  # 2nd linear
+        if dtype == torch.float32 or dtype == torch.float64:
+            init_weight_zavier(self.ff[0])  # 1st linear
+            init_weight_zavier(self.ff[2])  # 2nd linear
 
 
     def forward(self, x):
@@ -146,22 +147,25 @@ class TransformerBlock_naive(nn.Module):
 
 if __name__ == "__main__":
 
+    from classifier import TransformerSimpleClassify
+
     """
     finish up the tf block
     put them together, and be able to train
     """
+    dtype = torch.float32
 
     # create model
     #model = transformer()
 
-    sa = SelfAttention_naive(4, 3)
+    sa = SelfAttention_naive(4, 3, dtype=dtype)
     print(sa)
-    mha = MultiHeadAttention_naive(2, 4, 3)
+    mha = MultiHeadAttention_naive(2, 4, 3, dtype=dtype)
     print(mha)
-    model = TransformerBlock_naive(2, 4, 3)
+    model = TransformerBlock_naive(2, 4, 3, dtype=dtype)
     print(model)
 
-    model_tb = TransformerSimpleClassify(2, 4, 4, 10, 2)
+    model_tb = TransformerSimpleClassify(2, 4, 4, 10, 2, dtype=dtype)
     print(model_tb)
 
     """
@@ -171,7 +175,7 @@ if __name__ == "__main__":
     """
 
     n_batch  = 1
-    x = torch.ones([n_batch, 2,4])
+    x = torch.ones([n_batch, 2,4], dtype=dtype)
     # forward path
     model.train(False)
 
