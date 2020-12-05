@@ -1,4 +1,4 @@
-# Implement Transformer (TODO reference) with C
+# Simple Implement Transformer with C and Python
 
 Implement Tranformer with C and Python for educational purpose. Code is written for readability.
 
