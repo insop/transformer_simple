@@ -1,4 +1,4 @@
-# Simple Implement Transformer with C and Python
+# Simple Implementation for Transformer with C and Python
 
 Implement Tranformer with C and Python for educational purpose. Code is written for readability.
 
