@@ -331,11 +331,12 @@ print("#"*100)
 
 ti = timeit.timeit("q_module_tvm.run()", globals=globals(), number=TIMEIT_NRUN)
 print("TVM quantized bert run:", ti/TIMEIT_NRUN)
-print("diff: ", diff)
 
-import pdb;pdb.set_trace()
+#import pdb;pdb.set_trace()
 
 # save ISS
+"""
+
 
 # https://colab.research.google.com/github/d2l-ai/d2l-tvm-colab/blob/master/chapter_getting_started/from_mxnet.ipynb#scrollTo=AAMNEtJDb4LS
 
@@ -371,3 +372,4 @@ if True:
     print("loaded model diff", diff)
     ti = timeit.timeit("module_loaded.run()", globals=globals(), number=TIMEIT_NRUN)
     print("loaded model TVM quantized bert run:", ti/TIMEIT_NRUN)
+"""
