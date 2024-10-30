@@ -31,6 +31,16 @@ python ./experiments/classify.py  --random-seed=1234 --num-epochs=1 --tiny
 
 ```
 
+# Tests
+
+## Python implementation tests
+To run the tests for the Python implementation of the transformer, execute the following command:
+
+```
+cd src/python
+python -m unittest test_transformer.py
+```
+
 # TODO:
 - main Makefile for build library and c executable
 - add config load
