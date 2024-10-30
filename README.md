@@ -41,6 +41,14 @@ cd src/python
 python -m unittest test_transformer.py
 ```
 
+## C implementation tests
+To run the tests for the C implementation of the transformer, execute the following command:
+
+```
+cd src/c
+./test_transformer
+```
+
 # TODO:
 - main Makefile for build library and c executable
 - add config load
