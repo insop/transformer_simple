@@ -22,16 +22,16 @@ def init_weight_zavier(x):
         nn.init.constant_(x.bias, 0)
 
 class SelfAttention_naive(nn.Module):
+    """
+    A single self attention block
+
+    :param dim_emb: embedding dimension
+    :param dim_internal: dimension of internal representation, usually the same as dim_emb
+    :param head: number of multi head
+    :param mask
+
+    """
     def __init__(self, dim_emb, dim_internal, heads=8, mask=False, dropout=0.0, dtype=torch.float32):
-        """
-        A single self attention block
-
-        :param dim_emb: embedding dimension
-        :param dim_internal: dimension of internal representation, usually the same as dim_emb
-        :param head: number of multi head
-        :param mask
-
-        """
         super().__init__()
 
         self.dim_emb = dim_emb
@@ -69,17 +69,17 @@ class SelfAttention_naive(nn.Module):
 
 
 class MultiHeadAttention_naive(nn.Module):
+    """
+    multi head attention block
+
+    :param n_seq: number of token sequence
+    :param dim_emb: embedding dimension
+    :param dim_internal: dimension of internal representation, usually the same as dim_emb
+    :param head: number of multi head
+    :param mask
+
+    """
     def __init__(self, n_seq, dim_emb, dim_internal, heads=8, mask=False, dropout=0.0, dtype=torch.float32):
-        """
-        multi head attention block
-
-        :param n_seq: number of token sequence
-        :param dim_emb: embedding dimension
-        :param dim_internal: dimension of internal representation, usually the same as dim_emb
-        :param head: number of multi head
-        :param mask
-
-        """
         super().__init__()
 
         self.n_seq = n_seq
@@ -104,10 +104,10 @@ class MultiHeadAttention_naive(nn.Module):
 
 
 class TransformerBlock_naive(nn.Module):
+    """
+    :ff_hidden_mult: number of multiples of embedding for total hidden size
+    """
     def __init__(self, n_seq, dim_emb, dim_internal, heads=8, mask=False, ff_hidden_mult=4, dropout=0.0, dtype=torch.float32):
-        """
-        :ff_hidden_mult: number of multiples of embedding for total hidden size
-        """
         super().__init__()
 
         self.mha = MultiHeadAttention_naive(n_seq=n_seq, dim_emb=dim_emb, dim_internal=dim_internal, heads=heads, mask=mask, dropout=dropout, dtype=dtype)
